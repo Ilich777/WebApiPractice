@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/javascript.js"></script>
+    <script src="js/jquery.maskedinput.min.js"></script>
+    <meta charset="utf-8" />
+    <title>Бронирование</title>
+    <link rel="stylesheet" href="css/css.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+
+    <!--<script>
+        var url = 'https://localhost:44366/index.html';
+        //var value = "";
+        //$(document).ready(function () {
+        //    $("#div").change(function () {
+        //        alert($(this).val());
+        //        value = $(this).val();
+        //        location.href = url + '?&' + value;
+        //    });
+        //});
+        $(document).ready(function () {
+            $('#div').on('change', function () {
+                if ($(this).val() !== '0') {
+                    document.location.href = url + $(this).val();
+                }
+            });
+
+        })
+
+    </script>-->
+    <style>
+        h3{
+           font-family:Consolas;
+           font-size: 16px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <!--<table class="table table-condensed table-striped  col-md-6">
+        <thead><tr><th>Id</th><th>name_div</th></tr></thead>
+        <tbody>
+        </tbody>
+    </table>-->
+    ,<div class="container">
+
+        <div class="stepwizard col-md-offset-3">
+            <div class="stepwizard-row setup-panel">
+                <div class="stepwizard-step">
+                    <a href="#step-1" type="button" class="btn btn-primary btn-circle">1</a>
+                    <p>Услуги</p>
+                </div>
+                <div class="stepwizard-step">
+                    <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+                    <p>Данные</p>
+                </div>
+                <div class="stepwizard-step">
+                    <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
+                    <p>Step 3</p>
+                </div>
+            </div>
+        </div>
+
+        <form role="form" action="" method="post">
+            <div class="row setup-content" id="step-1">
+                <div class="col-xs-6 col-md-offset-3">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <!--<label class="control-label">First Name</label>
+    <input maxlength="100" type="text" required="required" class="form-control" placeholder="Enter First Name">-->
+                            <label class="control-label">Выберите нужное Вам подразделение</label>
+                            <select class="form-control" id="div">
+
+                                <option selected disabled>Выберите подразделение</option>
+                            </select>
+                            <label class="control-label">Выберите услугу для записи</label>
+                            <select class="form-control" id="ser">
+
+                                <option selected disabled>Выберите услугу</option>
+                            </select>
+                            <label class="control-label">Выберите время для записи</label>
+                            <select class="form-control" id="time">
+
+                                <option selected disabled>Выберите время</option>
+                            </select>
+                        </div>
+                        <!--<div class="form-group">
+                            <label class="control-label">Last Name</label>
+                            <input maxlength="100" type="text" required="required" class="form-control" placeholder="Enter Last Name">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Address</label>
+                            <textarea required="required" class="form-control" placeholder="Enter your address"></textarea>
+                        </div>-->
+                        <button class="btn btn-primary nextBtn btn-lg pull-right" id="button1" type="button">Далее</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row setup-content" id="step-2">
+                <div class="col-xs-6 col-md-offset-3">
+                    <input hidden type="text" id="ident">
+                    <div class="col-md-12">
+                        <div class="form-group">
+
+                            <label class="control-label">Номер телефона</label>
+                            <p><input maxlength="200" type="text" required="required" class="form-control" id="phone"></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Email</label>
+                            <input maxlength="200" type="text" required="required" class="form-control" id="email" placeholder="example@gmail.com" autofocus>
+                        </div>
+                        <!--<button class="btn btn-primary prevBtn btn-lg pull-left" type="button">Previous</button>-->
+                        <button class="btn btn-primary nextBtn btn-lg pull-right" id="button2" type="button">Далее</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row setup-content" id="step-3">
+                <div class="col-xs-6 col-md-offset-3">
+                    <div class="col-md-12">
+                        <h3> Step 3</h3>
+                        <button class="btn btn-primary prevBtn btn-lg pull-left" type="button">Previous</button>
+                        <button class="btn btn-success btn-lg pull-right" type="submit">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <!--<p>
+        <select id="div">
+
+            <option selected disabled>Выберите подразделение</option>
+        </select>
+    </p>
+    <p>
+        <select id="ser">
+
+            <option selected disabled>Выберите услугу</option>
+        </select>
+    </p>-->
+    <script>
+
+        // Получение всех подразделений
+        async function GetDivisions() {
+            // отправка запроса и получение ответа
+            const response = await fetch("/divisions", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            alert("request sent");
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+                const divisions = await response.json();
+                let rows = document.querySelector("select[id=div]");
+                divisions.forEach(division => {
+
+                    //rows.append(row(division));
+                    // добавляем полученные элементы в select
+                    rows.append(getAllD(division));
+                });
+            }
+        }
+        // Получение всех услуг
+        async function GetServices() {
+            // отправка запроса и получение ответа
+            const response = await fetch("/services", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            //alert("request sent");
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+                const services = await response.json();
+                let rows = document.querySelector("select[id=ser]");
+                services.forEach(service => {
+                    // добавляем полученные элементы в select
+                    rows.append(getAllS(service));
+                });
+            }
+        }
+        async function GetTime() {
+            // отправка запроса и получение ответа
+            const response = await fetch("/dateandtime", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            alert("request sent");
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+                const time = await response.json();
+                let rows = document.querySelector("select[id=time]");
+                time.forEach(time => {
+
+                    //rows.append(row(division));
+                    // добавляем полученные элементы в select
+                    rows.append(getAllT(time));
+                });
+            }
+        }
+
+
+        // создание строки для таблицы
+        function row(division) {
+
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", division.id);
+
+            const idTd = document.createElement("td");
+            idTd.append(division.id);
+            tr.append(idTd);
+
+            const nameTd = document.createElement("td");
+            nameTd.append(division.name_div);
+            tr.append(nameTd);
+
+            return tr;
+        }
+        function getAllD(division) {
+            const option = document.createElement("option");
+            option.setAttribute("data-rowid-d", division.id);
+
+            const nameOption = document.createElement("option");
+            nameOption.append(division.name_div);
+            option.append(nameOption);
+
+            return option;
+        }
+        function getAllS(service) {
+
+            const option = document.createElement("option");
+            option.setAttribute("data-rowid-s", service.id);
+
+            //const nameOptionD = document.createElement("option");
+            //nameOptionD.append(division.name_div);
+            //option.append(nameOptionD);
+
+            const nameOption = document.createElement("option");
+            nameOption.append(service.name_ser);
+            option.append(nameOption);
+
+            return option;
+        }
+        function getAllT(time) {
+
+            const option = document.createElement("option");
+            option.setAttribute("data-rowid-s", time.id);
+
+            //const nameOptionD = document.createElement("option");
+            //nameOptionD.append(division.name_div);
+            //option.append(nameOptionD);
+
+            const nameOption = document.createElement("option");
+            nameOption.append(time.datetime);
+            option.append(nameOption);
+
+            return option;
+        }
+        GetDivisions();
+        //GetServices(); //Закоммментировать при исключении Microsoft.Data.SqlClient.SqlException: "A severe error occurred on the current command.  The results, if any, should be discarded."
+        GetTime();
+    </script>
+
+    <script type="text/javascript">
+        var identifier = 0;
+        $(document).ready(function () {
+
+            $("#phone").mask("+7(999) 999-99-99");
+
+            $('#div').change(function () {
+
+                var id = $(this).val();
+
+                function getAllS(service) {
+
+                    const option = document.createElement("option");
+
+                    const nameOption = document.createElement("option");
+                    nameOption.append(service);
+                    option.append(nameOption);
+
+                    return option;
+                }
+                $.ajax({
+                    url: 'https://localhost:44366/services/' + id,
+                    type: 'GET',
+                    cache: false,
+                    data: id,
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+
+                        mas = []
+                        $.each(data, function (name, value) {
+                            mas[name] = value.text;
+                            //alert(mas[name]);
+                        });
+                        //$("#ser").empty();
+                        var serv = document.getElementById('ser');
+                        var i, L = serv.options.length - 1;
+                        for (i = L; i >= 1; i--) {
+                            serv.remove(i);
+                        }
+
+                        let rows = document.querySelector("select[id=ser]");
+
+                        mas.forEach(service => {
+                            // добавляем полученные элементы в select
+                            rows.append(getAllS(service));
+                        });
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                    }
+
+                });
+            });
+
+            $('#button1').click(function (e) {
+
+                function addError(errors) {
+                    errors.forEach(error => {
+                        const p = document.createElement("p");
+                        p.append(error);
+                        document.getElementById("errors").append(p);
+                    });
+                }
+                CreateRow(e);
+
+                async function CreateRow(e) {
+
+                    const response = await fetch("/dataset", {
+                        method: "POST",
+                        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            division: $("#div").val(),
+                            service: $("#ser").val()
+                        })
+                    })
+                    /*.then(data => {
+                    identifier = data.json,
+                        console.log(identifier)
+                });*/
+
+                    if (response.ok === true) {
+                        const user = await response.json();
+
+                        console.log(user);
+                        identifier = user;
+                        console.log(identifier);
+                    }
+                    else {
+                        e.preventDefault();
+                        const errorData = await response.json();
+                        console.log("errors", errorData);
+                        if (errorData) {
+                            // ошибки вследствие валидации по атрибутам
+                            if (errorData.errors) {
+                                if (errorData.errors["division"]) {
+                                    addError(errorData.errors["division"]);
+                                }
+                            }
+                            // кастомные ошибки, определенные в контроллере
+                            // добавляем ошибки свойства Name
+                            if (errorData["division"]) {
+                                addError(errorData["division"]);
+                            }
+
+                        }
+
+                        document.getElementById("errors").style.display = "block";
+                    }
+
+
+                }
+            });
+
+            
+            $('#button2').click(function (e) {
+                document.getElementById('ident').value = identifier;
+                try {
+                    let data = {
+                        phone: $("#phone").val(),
+                        email: $("#email").val(),
+                        Dataset_id: $("#ident").val()
+                    }
+                    $.ajax({
+                        type: 'PUT',
+                        url: '/dataset',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data), // access in body
+                    }).done(function () {
+                        console.log('SUCCESS');
+                    }).fail(function (msg) {
+                        console.log('FAIL');
+                    }).always(function (msg) {
+                        console.log('ALWAYS');
+                    });
+                    //const response2 = await fetch("/dataset", {
+                    //    method: "PUT",
+                    //    headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                    //    body: JSON.stringify({
+                    //        phone: $("#phone").val(),
+                    //        email: $("#email").val(),
+                    //        Dataset_id: $("#ident").val()
+                    //    })
+                    //})
+                    //if (response2.ok === true) {
+                    //    const data = await response.json();
+
+                    //    console.log(JSON.stringify(data));
+                    //}
+                    //}
+
+                }
+                catch (error) {
+                    console.error('Ошибка:', error);
+                }
+            });
+           
+        });
+
+
+
+    </script>
+
+    <!--<script type="text/javascript">
+        $(document).ready(function () {
+
+        });
+    </script>-->
+</body>
+</html >
