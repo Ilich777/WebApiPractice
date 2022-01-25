@@ -19,7 +19,9 @@ namespace WebApiPractice.Controllers
             this.context = context;
             if (!this.context.DateAndTime.Any())//если DateAndTime не содержит что-либо
             {
-                this.context.DateAndTime.Add(new DateAndTime { datetime = new DateTime(2022, 01, 20, 10, 00, 00), IsAvailable = true}); //добавление
+                DateTime date = new DateTime(2022, 01, 20, 10, 00, 00);
+
+                this.context.DateAndTime.Add(new DateAndTime { datetime = Convert.ToDateTime(date.ToShortDateString()), IsAvailable = true }) ; //добавление
                 this.context.DateAndTime.Add(new DateAndTime { datetime = new DateTime(2022, 01, 20, 10, 30, 00), IsAvailable = false});  //добавление
                 this.context.DateAndTime.Add(new DateAndTime { datetime = new DateTime(2022, 01, 20, 11, 00, 00), IsAvailable = true}); //добавление
                 this.context.SaveChanges(); //сохранение изменений

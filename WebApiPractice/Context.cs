@@ -13,9 +13,15 @@ namespace WebApiPractice
 
         public DbSet<Services> Services { get; set; } // для получения данных 
 
+        public DbSet<DateAndTime> DateAndTime { get; set; }
+
+        public DbSet<Date> Dates { get; set; }
+
+        public DbSet<Time> Times { get; set; }
+
         public DbSet<Dataset> Dataset { get; set; } //класса из БД
 
-        public DbSet<DateAndTime> DateAndTime { get; set; }
+        
         public Context(DbContextOptions<Context> options)
             : base(options)
         {
