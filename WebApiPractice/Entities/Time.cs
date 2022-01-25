@@ -11,6 +11,8 @@
         public int dateID { get; init; } //id даты
 
         public Date obj_date { get; set; } //переменная класса даты,
-                                                //для получения времени
+                                           //для получения времени
+
+        public bool IsAvailable { get; init; } //свободно/занято
     }
 }

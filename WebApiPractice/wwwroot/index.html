@@ -83,7 +83,12 @@
 
                                 <option selected disabled>Выберите услугу</option>
                             </select>
-                            <label class="control-label">Выберите время для записи</label>
+                            <label class="control-label">Выберите день</label>
+                            <select class="form-control" id="date">
+
+                                <option selected disabled>Выберите день</option>
+                            </select>
+                            <label class="control-label">Выберите время</label>
                             <select class="form-control" id="time">
 
                                 <option selected disabled>Выберите время</option>
@@ -152,7 +157,7 @@
                 method: "GET",
                 headers: { "Accept": "application/json" }
             });
-            alert("request sent");
+            //alert("request sent");
             // если запрос прошел нормально
             if (response.ok === true) {
                 // получаем данные
@@ -185,9 +190,9 @@
                 });
             }
         }
-        async function GetTime() {
+        async function GetDate() {
             // отправка запроса и получение ответа
-            const response = await fetch("/dateandtime", {
+            const response = await fetch("/date", {
                 method: "GET",
                 headers: { "Accept": "application/json" }
             });
@@ -195,13 +200,13 @@
             // если запрос прошел нормально
             if (response.ok === true) {
                 // получаем данные
-                const time = await response.json();
-                let rows = document.querySelector("select[id=time]");
-                time.forEach(time => {
+                const date = await response.json();
+                let rows = document.querySelector("select[id=date]");
+                date.forEach(d => {
 
                     //rows.append(row(division));
                     // добавляем полученные элементы в select
-                    rows.append(getAllT(time));
+                    rows.append(getAllDate(d));
                 });
             }
         }
@@ -248,24 +253,24 @@
 
             return option;
         }
-        function getAllT(time) {
+        function getAllDate(date) {
 
             const option = document.createElement("option");
-            option.setAttribute("data-rowid-s", time.id);
+            option.setAttribute("data-rowid-s", date.id);
 
             //const nameOptionD = document.createElement("option");
             //nameOptionD.append(division.name_div);
             //option.append(nameOptionD);
 
             const nameOption = document.createElement("option");
-            nameOption.append(time.datetime);
+            nameOption.append(date.date);
             option.append(nameOption);
 
             return option;
         }
         GetDivisions();
         //GetServices(); //Закоммментировать при исключении Microsoft.Data.SqlClient.SqlException: "A severe error occurred on the current command.  The results, if any, should be discarded."
-        GetTime();
+        GetDate();
     </script>
 
     <script type="text/javascript">
@@ -284,6 +289,17 @@
 
                     const nameOption = document.createElement("option");
                     nameOption.append(service);
+                    option.append(nameOption);
+
+                    return option;
+                }
+                function getTime(time) {
+
+                    const option = document.createElement("option");
+                    option.setAttribute("data-rowid-s", time.id);
+
+                    const nameOption = document.createElement("option");
+                    nameOption.append(time.time);
                     option.append(nameOption);
 
                     return option;
@@ -314,6 +330,45 @@
                         mas.forEach(service => {
                             // добавляем полученные элементы в select
                             rows.append(getAllS(service));
+                        });
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                    }
+
+                });
+            });
+
+            $('#date').change(function () {
+
+                var id = $(this).val();
+
+                $.ajax({
+                    url: 'https://localhost:44366/time/' + id,
+                    type: 'GET',
+                    cache: false,
+                    data: id,
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+
+                        mas = []
+                        $.each(data, function (name, value) {
+                            mas[name] = value.text;
+                            //alert(mas[name]);
+                        });
+                        //$("#ser").empty();
+                        var time = document.getElementById('time');
+                        var i, L = time.options.length - 1;
+                        for (i = L; i >= 1; i--) {
+                            time.remove(i);
+                        }
+
+                        let rows = document.querySelector("select[id=time]");
+
+                        mas.forEach(time => {
+                            // добавляем полученные элементы в select
+                            rows.append(getTime(time));
                         });
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
