@@ -293,17 +293,6 @@
 
                     return option;
                 }
-                function getTime(time) {
-
-                    const option = document.createElement("option");
-                    option.setAttribute("data-rowid-s", time.id);
-
-                    const nameOption = document.createElement("option");
-                    nameOption.append(time.time);
-                    option.append(nameOption);
-
-                    return option;
-                }
                 $.ajax({
                     url: 'https://localhost:44366/services/' + id,
                     type: 'GET',
@@ -343,6 +332,17 @@
 
                 var id = $(this).val();
 
+                function getTime(time) {
+
+                    const option = document.createElement("option");
+
+                    const nameOption = document.createElement("option");
+                    nameOption.append(time);
+                    option.append(nameOption);
+
+                    return option;
+                }
+
                 $.ajax({
                     url: 'https://localhost:44366/time/' + id,
                     type: 'GET',
@@ -354,7 +354,7 @@
 
                         mas = []
                         $.each(data, function (name, value) {
-                            mas[name] = value.text;
+                            mas[name] = value.time;
                             //alert(mas[name]);
                         });
                         //$("#ser").empty();
