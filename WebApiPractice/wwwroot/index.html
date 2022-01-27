@@ -191,7 +191,7 @@
                 method: "GET",
                 headers: { "Accept": "application/json" }
             });
-            alert("request sent");
+            alert("response received");
             // если запрос прошел нормально
             if (response.ok === true) {
                 // получаем данные
@@ -341,7 +341,9 @@
                         headers: { "Accept": "application/json", "Content-Type": "application/json" },
                         body: JSON.stringify({
                             division: $("#div").val(),
-                            service: $("#ser").val()
+                            service: $("#ser").val(),
+                            date: $("#date").val(),
+                            time: $("#time").val()
                         })
                     })
                     /*.then(data => {
@@ -354,7 +356,7 @@
 
                         console.log(user);
                         identifier = user;
-                        console.log(identifier);
+                        //console.log(identifier);
                     }
                     else {
                         e.preventDefault();
