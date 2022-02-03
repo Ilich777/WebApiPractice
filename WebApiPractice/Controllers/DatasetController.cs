@@ -17,6 +17,18 @@ namespace WebApiPractice.Controllers
         {
             this.context = context;
         }
+
+        [HttpGet] //Invoke-RestMethod http://localhost:44051/Dataset -Method GET
+        public IActionResult Get()
+        {
+            var obj = from item in context.Dataset
+                       where item.cancelled == false && item.finished == false
+                       select item;
+            if (obj == null)
+                return NotFound();
+            return new ObjectResult(obj);
+        }
+
         [HttpPost]//Invoke-RestMethod http://localhost:44051/Dataset -Method POST -Body (@{division = "Абитуриент"; service = "ШИТИС"} | ConvertTo-Json) -ContentType "application/json; charset=utf-8"
         public async Task<ActionResult<Dataset>> Post(Dataset dataset)
         {
@@ -41,7 +53,7 @@ namespace WebApiPractice.Controllers
             context.Dataset.Add(dataset); //при адекватном запросе post добавляем данные в таблицу Dataset
             await context.SaveChangesAsync(); //сохранение изменений
 
-            return Ok(dataset.id); //возвращаем состояние ok
+            return Ok(dataset.id); //возвращает id записи
         }
         [HttpPut]
         public async Task<ActionResult<Dataset>> Put(ListFormData data)
@@ -59,6 +71,35 @@ namespace WebApiPractice.Controllers
 
             return Ok();
         }
+        [Route("/cancel/{id:int}")]
+        public async Task<ActionResult<Dataset>> Put_c(int id)
+        {
+            Dataset dataset = context.Dataset
+                .Where(a => a.id == id)
+                .Select(a => a)
+                .First();
 
+            dataset.cancelled = true;
+            context.Dataset.Update(dataset);
+
+            await context.SaveChangesAsync(); //сохранение изменений
+
+            return Ok();
+        }
+        [Route("/finish/{id:int}")]
+        public async Task<ActionResult<Dataset>> Put_f(int id)
+        {
+            Dataset dataset = context.Dataset
+                .Where(a => a.id == id)
+                .Select(a => a)
+                .First();
+
+            dataset.finished = true;
+            context.Dataset.Update(dataset);
+
+            await context.SaveChangesAsync(); //сохранение изменений
+
+            return Ok();
+        }
     }
 }
