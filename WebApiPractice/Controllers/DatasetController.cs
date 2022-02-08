@@ -28,6 +28,26 @@ namespace WebApiPractice.Controllers
                 return NotFound();
             return new ObjectResult(obj);
         }
+        [Route("/canceled")]
+        public IActionResult Get_с()
+        {
+            var obj = from item in context.Dataset
+                      where item.cancelled == true && item.finished == false
+                      select item;
+            if (obj == null)
+                return NotFound();
+            return new ObjectResult(obj);
+        }
+        [Route("/finished")]
+        public IActionResult Get_f()
+        {
+            var obj = from item in context.Dataset
+                      where item.cancelled == false && item.finished == true
+                      select item;
+            if (obj == null)
+                return NotFound();
+            return new ObjectResult(obj);
+        }
 
         [HttpPost]//Invoke-RestMethod http://localhost:44051/Dataset -Method POST -Body (@{division = "Абитуриент"; service = "ШИТИС"} | ConvertTo-Json) -ContentType "application/json; charset=utf-8"
         public async Task<ActionResult<Dataset>> Post(Dataset dataset)
@@ -80,6 +100,7 @@ namespace WebApiPractice.Controllers
                 .First();
 
             dataset.cancelled = true;
+            dataset.finished = false;
             context.Dataset.Update(dataset);
 
             await context.SaveChangesAsync(); //сохранение изменений
@@ -95,6 +116,23 @@ namespace WebApiPractice.Controllers
                 .First();
 
             dataset.finished = true;
+            dataset.cancelled = false;
+            context.Dataset.Update(dataset);
+
+            await context.SaveChangesAsync(); //сохранение изменений
+
+            return Ok();
+        }
+        [Route("/restore/{id:int}")]
+        public async Task<ActionResult<Dataset>> Put_r(int id)
+        {
+            Dataset dataset = context.Dataset
+                .Where(a => a.id == id)
+                .Select(a => a)
+                .First();
+
+            dataset.finished = false;
+            dataset.cancelled = false;
             context.Dataset.Update(dataset);
 
             await context.SaveChangesAsync(); //сохранение изменений
