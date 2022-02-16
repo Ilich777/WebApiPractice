@@ -21,7 +21,9 @@ namespace WebApiPractice
 
         public DbSet<Dataset> Dataset { get; set; } //класса из БД
 
-        
+        public DbSet<Login> Login { get; set; }
+
+
         public Context(DbContextOptions<Context> options)
             : base(options)
         {
