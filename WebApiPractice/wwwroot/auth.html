@@ -1,12 +1,13 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
+    <script src="js/jquery-3.3.1.min.js"></script>
     <meta charset="utf-8" />
     <title>Войти</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <link rel="stylesheet" href="css/style_for_authhtml.css">
-        <link rel="icon" href="img/icon.ico" type="image/x-icon">
-        <link rel="shortcut icon" href="img/icon.ico" type="image/x-icon">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="css/style_for_authhtml.css">
+    <link rel="icon" href="img/icon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/icon.ico" type="image/x-icon">
 </head>
 <body>
     <form method="post" action="" class="login">
@@ -27,55 +28,29 @@
         <p class="forgot-password"><a href="index.html">Забыл пароль?</a></p>
     </form>
     <script type="text/javascript">
-        $('#enter').click(function (e) {
-
+        
+            $('#enter').click(function (e) {
+                async function send() {
                 const response = await fetch("/login", {
                     method: "POST",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        division: $("#div").val(),
-                        service: $("#ser").val(),
-                        date: $("#date").val(),
-                        time: $("#time").val()
+                        login: $("#login").val(),
+                        password: $("#password").val()
                     })
+
                 })
-                /*.then(data => {
-                identifier = data.json,
-                    console.log(identifier)
-            });*/
 
                 if (response.ok === true) {
                     const user = await response.json();
-
                     console.log(user);
-                    identifier = user;
-                    //console.log(identifier);
-                }
-                else {
-                    e.preventDefault();
-                    const errorData = await response.json();
-                    console.log("errors", errorData);
-                    if (errorData) {
-                        // ошибки вследствие валидации по атрибутам
-                        if (errorData.errors) {
-                            if (errorData.errors["division"]) {
-                                addError(errorData.errors["division"]);
-                            }
-                        }
-                        // кастомные ошибки, определенные в контроллере
-                        // добавляем ошибки свойства Name
-                        if (errorData["division"]) {
-                            addError(errorData["division"]);
-                        }
-
                     }
 
-                    document.getElementById("errors").style.display = "block";
                 }
-
-
+                send();
+            });
         
-        });
+        
     </script>
 </body>
 </html>

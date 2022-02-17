@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 using WebApiPractice.Entities;
 
 namespace WebApiPractice.Controllers
@@ -19,6 +21,19 @@ namespace WebApiPractice.Controllers
             this.context = context;
         }
 
+        public string ToSHA256(string pass)
+        {
+            using var sha256 = SHA256.Create();
+            byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(pass));
+
+            var sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("x2"));
+            }
+            return sb.ToString();
+        }
+
         [HttpPost]//Invoke-RestMethod http://localhost:44051/Login -Method POST -Body (@{login = "admin"; password = "nimda"} | ConvertTo-Json) -ContentType "application/json; charset=utf-8"
         public async Task<ActionResult<Login>> Post(Login login)
         {
@@ -26,7 +41,21 @@ namespace WebApiPractice.Controllers
             {
                 return BadRequest();
             }
-
+            var user_id = from d in context.Login
+                       where d.login == login.login
+                       select d.id;
+            if (user_id == null)
+                return NotFound();
+            if (user_id != null)
+            {
+                var user_pass = from d in context.Login
+                           where d.id == Convert.ToInt32(user_id)
+                           select d.password;
+                login.password = ToSHA256(Convert.ToString(user_pass));
+            
+            }
+            //return new ObjectResult(time);
+            
             //if (login.division == null)
             //{
             //    ModelState.AddModelError("division", "Выберите необходимое подразделение");
@@ -40,7 +69,7 @@ namespace WebApiPractice.Controllers
             context.Login.Add(login); //при адекватном запросе post добавляем данные в таблицу Dataset
             await context.SaveChangesAsync(); //сохранение изменений
 
-            return Ok(login.id); //возвращает id записи
+            return Ok(); //возвращает id записи
         }
     }
 }
