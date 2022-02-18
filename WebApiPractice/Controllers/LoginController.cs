@@ -35,6 +35,7 @@ namespace WebApiPractice.Controllers
         }
 
         [HttpPost]//Invoke-RestMethod http://localhost:44051/Login -Method POST -Body (@{login = "admin"; password = "nimda"} | ConvertTo-Json) -ContentType "application/json; charset=utf-8"
+        [Route ("/auth")]
         public async Task<ActionResult<Login>> Post(Login login)
         {
             if (login == null) //если присланные поля пусты
@@ -70,6 +71,22 @@ namespace WebApiPractice.Controllers
             await context.SaveChangesAsync(); //сохранение изменений
 
             return Ok(); //возвращает id записи
+        }
+        [Route("/registration")]
+        public async Task<ActionResult<Login>> Registration(Login login)
+        {
+            if (login == null) //если присланные поля пусты
+                return BadRequest();
+            else
+            {
+                login.password = ToSHA256(Convert.ToString(login.password));
+                login.rights = "Оператор";
+            }
+
+            context.Login.Add(login); //при адекватном запросе post добавляем данные в таблицу Dataset
+            await context.SaveChangesAsync(); //сохранение изменений
+
+            return Ok();
         }
     }
 }
