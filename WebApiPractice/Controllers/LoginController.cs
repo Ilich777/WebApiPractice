@@ -35,26 +35,33 @@ namespace WebApiPractice.Controllers
         }
 
         [HttpPost]//Invoke-RestMethod http://localhost:44051/Login -Method POST -Body (@{login = "admin"; password = "nimda"} | ConvertTo-Json) -ContentType "application/json; charset=utf-8"
-        [Route ("/auth")]
-        public async Task<ActionResult<Login>> Post(Login login)
+        public IActionResult Post(Login login)
         {
-            if (login == null) //если присланные поля пусты
+            if (login.login == null || login.password == null) //если присланные поля пусты
             {
                 return BadRequest();
             }
-            var user_id = from d in context.Login
-                       where d.login == login.login
-                       select d.id;
-            if (user_id == null)
-                return NotFound();
-            if (user_id != null)
+            else
             {
-                var user_pass = from d in context.Login
-                           where d.id == Convert.ToInt32(user_id)
+                var user = from d in context.Login
+                              where d.login == login.login
+                              select d;
+                var user_password = from d in context.Login
+                           where d.login == login.login
                            select d.password;
-                login.password = ToSHA256(Convert.ToString(user_pass));
-            
+                string password = Convert.ToString(user_password);
+                if (user == null)
+                    return NotFound();
+                else
+                {
+                    string recieved = ToSHA256(Convert.ToString(login.password));
+                    if (password == recieved)
+                        return Ok(new {Message = "ACCESS GRANTED!"});
+                    else
+                        return Forbid();
+                }
             }
+            
             //return new ObjectResult(time);
             
             //if (login.division == null)
@@ -67,10 +74,10 @@ namespace WebApiPractice.Controllers
 
             //// если ошибок нет, сохраняем в базу данных
 
-            context.Login.Add(login); //при адекватном запросе post добавляем данные в таблицу Dataset
-            await context.SaveChangesAsync(); //сохранение изменений
+            //context.Login.Add(login); //при адекватном запросе post добавляем данные в таблицу Dataset
+            //await context.SaveChangesAsync(); //сохранение изменений
 
-            return Ok(); //возвращает id записи
+            //return Ok(); //возвращает id записи
         }
         [Route("/registration")]
         public async Task<ActionResult<Login>> Registration(Login login)

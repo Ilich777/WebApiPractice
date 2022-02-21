@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiPractice.Repositories;
@@ -26,7 +27,9 @@ namespace WebApiPractice
             services.AddDbContext<Context>(options => options.UseSqlServer(con)); // устанавливаем контекст данных
 
             services.AddControllers(); // используем контроллеры без представлений
-            
+
+            services.AddAuthentication();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
