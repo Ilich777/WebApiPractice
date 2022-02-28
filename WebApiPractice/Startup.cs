@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApiPractice.JwtAuth.Auth;
 using WebApiPractice.Repositories;
 
 namespace WebApiPractice
@@ -21,9 +22,14 @@ namespace WebApiPractice
        
         public void ConfigureServices(IServiceCollection services)
         {
+            var builder = WebApplication.CreateBuilder();
+            ConfigurationManager configuration = builder.Configuration;
+
             string con = "Server=(localdb)\\mssqllocaldb;Database=Dataset;Trusted_Connection=True;";
             
             services.AddDbContext<Context>(options => options.UseSqlServer(con)); // устанавливаем контекст данных
+
+            //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ConnStr")));
 
             services.AddControllers(); // используем контроллеры без представлений
             
@@ -39,6 +45,12 @@ namespace WebApiPractice
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthentication();
+            
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
