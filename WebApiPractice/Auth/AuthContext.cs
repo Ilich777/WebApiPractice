@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebApiPractice.JwtAuth.Auth
+namespace WebApiPractice.Auth
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class AuthContext : IdentityDbContext<IdentityUser>
     {
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public AuthContext(DbContextOptions<AuthContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
