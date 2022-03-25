@@ -4,84 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiPractice.JwtAuth.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class AuthorizeController : Controller
     {
-        // GET: AuthorizeController
-        public ActionResult Index()
+        [Authorize]
+        [HttpGet]
+        [Route("get_access")]
+        public IActionResult Get()
         {
-            return View();
-        }
-
-        // GET: AuthorizeController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: AuthorizeController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: AuthorizeController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AuthorizeController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: AuthorizeController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: AuthorizeController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AuthorizeController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return Ok("Hello World!");
         }
     }
 }

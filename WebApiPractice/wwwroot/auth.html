@@ -25,30 +25,65 @@
             <button type="button" class="login-button" id="enter">Войти</button>
         </p>
 
+            <button type="button" class="" id="send_token">Токен</button>
+
+
         <p class="forgot-password"><a href="index.html">Забыл пароль?</a></p>
     </form>
     <script type="text/javascript">
         
-            $('#enter').click(function (e) {
-                async function send() {
-                const response = await fetch("/login", {
-                    method: "POST",
-                    headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        login: $("#login").val(),
-                        password: $("#password").val()
-                    })
-
-                })
-
-                if (response.ok === true) {
-                    const user = await response.json();
-                    console.log(user);
-                    }
-
-                }
-                send();
+        var token;
+        async function send_dataset(url) {
+            
+            var data = JSON.stringify({
+                username: $("#login").val(),
+                password: $("#password").val()
             });
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: data
+
+            });
+
+            if (response.ok === true) {
+                const user = await response.json();
+                token = user.token;
+                alert(token);
+                //const d = new Date();
+                //d.setTime(d.getTime() + (24 * 60 * 60 * 1000));
+                //let expires = "expires=" + d.toUTCString();
+                //document.cookie = "user=" + token + ";" + expires + ";path=/";
+            }
+
+        }
+        async function get_access(url) {
+
+            alert(token);
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json; charset=utf-8",
+                    "Authorization": `Bearer ${token}`  // передача токена в заголовке*/
+                },
+                //credentials: 'same-origin'
+
+            });
+            if (response.ok === true) {
+
+                const data = await response.json();
+                console.log(data);
+            }
+            else
+                console.log("Status: ", response.status);
+        }
+
+        $('#enter').click(function (e) {
+            send_dataset("/api/authenticate/login");
+        });
+        $('#send_token').click(function (e) {
+            get_access("/authorize/get_access");
+        });
         
         
     </script>

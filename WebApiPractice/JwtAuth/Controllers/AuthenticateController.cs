@@ -31,7 +31,6 @@ namespace WebApiPractice.JwtAuth.Auth
             _roleManager = roleManager;
             _configuration = configuration;
         }
-
         [HttpPost] //Invoke-RestMethod http://localhost:41158/api/authenticate/login -Method POST -Body (@{username = "user"; password = "123"} | ConvertTo-Json) -ContentType "application/json; charset=utf-8"
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -42,10 +41,10 @@ namespace WebApiPractice.JwtAuth.Auth
                 var userRoles = await _userManager.GetRolesAsync(user);
 
                 var authClaims = new List<Claim>
-            {
+                {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
+                };
 
                 foreach (var userRole in userRoles)
                 {
@@ -53,13 +52,23 @@ namespace WebApiPractice.JwtAuth.Auth
                 }
 
                 var token = GetToken(authClaims);
+                var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+                HttpContext.Response.Cookies.Append(".AspNetCore.Application.Id", encodedToken,
+                new CookieOptions
+                {
+                    //MaxAge = TimeSpan.FromMinutes(60)
+                    Expires = DateTimeOffset.FromUnixTimeSeconds((long)token.Payload.Exp)
+                }) ;
 
                 return Ok(new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    token = encodedToken,
                     expiration = token.ValidTo
                 });
+
             }
+            
             return Unauthorized();
         }
 
@@ -81,6 +90,7 @@ namespace WebApiPractice.JwtAuth.Auth
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
@@ -126,7 +136,7 @@ namespace WebApiPractice.JwtAuth.Auth
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddSeconds(20),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );
