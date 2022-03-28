@@ -24,8 +24,8 @@ namespace WebApiPractice.Controllers
         {
             _logger = logger;
         }
+
         [HttpGet]
-        [Route("/get")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();

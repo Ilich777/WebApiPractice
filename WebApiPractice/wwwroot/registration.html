@@ -85,7 +85,7 @@
 
         $('#button').click(function (e) {
             async function send() {
-                const response = await fetch("/authenticate/register", {
+                const response = await fetch("/registration", {
                     method: "POST",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
                     body: JSON.stringify({
