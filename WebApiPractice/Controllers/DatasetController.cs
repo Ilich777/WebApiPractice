@@ -52,18 +52,17 @@ namespace WebApiPractice.Controllers
         [HttpPost]//Invoke-RestMethod http://localhost:44051/Dataset -Method POST -Body (@{division = "Абитуриент"; service = "ШИТИС"} | ConvertTo-Json) -ContentType "application/json; charset=utf-8"
         public async Task<ActionResult<Dataset>> Post(Dataset dataset)
         {
-            
-
 
             if (dataset == null) //если присланные поля пусты
             {
                 return BadRequest();
             }
 
-            if (dataset.division == null)
-            {
-                ModelState.AddModelError("division", "Выберите необходимое подразделение");
-            }
+            // обработка частных случаев валидации
+            //if (dataset.division == null)
+            //    ModelState.AddModelError("division", "Выберите необходимое подразделение");
+            //else if (dataset.service == null)
+            //    ModelState.AddModelError("service", "Выберите необходимую услугу");
             // если есть ошибки - возвращаем ошибку 400
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

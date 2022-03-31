@@ -79,7 +79,7 @@ namespace WebApiPractice.JwtAuth.Auth
             var userExists = await _userManager.FindByNameAsync(model.Username);
 
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, new Response { Status = "Error", Message = "User already exists!" });
 
             IdentityUser user = new()
             {
@@ -89,7 +89,7 @@ namespace WebApiPractice.JwtAuth.Auth
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = "Error", Message = "User creation failed! Please change pair login/password and try again." });
             
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });

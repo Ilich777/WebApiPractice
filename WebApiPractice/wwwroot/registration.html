@@ -44,14 +44,8 @@
                             <label class="control-label">Логин</label>
                             <p><input maxlength="32" type="text" required="required" class="form-control" id="login" placeholder="User"></p>
 
-                            <label class="control-label">ФИО</label>
-                            <p><input maxlength="64" type="text" required="required" class="form-control" id="FIO" placeholder="Иванов Иван Иванович"></p>
-
                             <label class="control-label">Email</label>
                             <p><input maxlength="64" type="email" required="required" class="form-control" id="email" placeholder="example@gmail.com"></p>
-
-                            <label class="control-label">Телефон</label>
-                            <p><input maxlength="13" type="tel" required="required" class="form-control" id="phone" placeholder="+7(800)555-35-35"></p>
 
                             <label class="control-label">Пароль</label>
                             <p><input maxlength="13" type="password" required="required" class="form-control" id="password" placeholder="********"></p>
@@ -85,15 +79,13 @@
 
         $('#button').click(function (e) {
             async function send() {
-                const response = await fetch("/authenticate/register", {
+                const response = await fetch("api/authenticate/register", {
                     method: "POST",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        login: $("#login").val(),
-                        password: $("#password").val(),
-                        FIO: $("#FIO").val(),
+                        username: $("#login").val(),
                         email: $("#email").val(),
-                        phone: $("#phone").val()
+                        password: $("#password").val()
                     })
 
                 })
